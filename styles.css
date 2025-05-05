@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --iu_crimson: #900;
+    --pink: rgb(188, 79, 115);
+    --white: rgb(222, 222, 222);
+    --cornflower: #6495ed;
+}
+
+
+body {
+    font-family: 'Noto Sans', sans-serif;
+    background-color: var(--white);
+    margin: 0;
+}
+
+h1 {
+    font-size: 40px;
+    font-weight: 600;
+}
+
+#Header {
+    background-color: var(--cornflower);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 10%;
+    padding: 2% 2% 2% 5%;
+    /* padding-left: 5%; */
+}
+
+#Header h1 {
+    color: var(--white);
+}
+
+#NavBar {
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    right: 5%;
+    width: 40%;
+    justify-content: end;
+}
+
+#NavBar li {
+    padding-right: 5%;
+    font-size: 18px;
+}
+
+#NavBar a {
+    text-decoration: none;
+    color: var(--white);
+}
+
+#NavBar a:hover {
+    text-decoration: underline;
+}
+
+#GenderSelect {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#ChartContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#ChartContainer #Label {
+    position: absolute;
+    right: 5%;
+}
+
+#Documentation {
+    margin: 5%;
+    width: 100%;
+}

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="./styles.css">
+        <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>        <!-- <script src="./js/header.js"></script> -->
+        <!-- <script src="./js/d3.js"></script> -->
+        <link rel="icon" type="image/png" href="./iu_logo.png">
+        <title>Heart Attack Data Vizualization</title>
+    </head>
+    <body>
+        <div id="Header">
+            <div>
+                <h1>Heart Attack Patient Data</h1>
+            </div>
+            <ul id="NavBar">
+                <li>
+                    <a href="./index.html">Visualization</a>
+                </li>
+                <li>
+                    <a href="./docs.html">Documentation</a>
+                </li>
+                <li>
+                    <a href="https://www.youtube.com"  target="_blank">Video Walkthrough</a>
+                </li>
+            </ul>
+        </div>
+        <div id="GenderSelect">
+            <h2>Common Symptoms of Heart Attack Patients</h2>
+            <div>
+                Gender
+                <button onclick="set_chart('Male')">Male</button>
+                <button onclick="set_chart('Female')">Female</button>
+            </div>
+
+        </div>
+        <div id="ChartContainer"></div>
+    </body>
+    <script>
+        const height = 550
+        const width = 600
+        const radius = (height / 2) - 50
+
+        const svg = d3.select("#ChartContainer")
+            .append("svg")
+            .attr("height", height)
+                .attr("width", width)
+            .append("g")
+                .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+                
+        const set_chart = (gender) => {
+            d3.selectAll("text")
+                .remove()
+            
+            d3.csv("./data/Medicaldataset.csv")
+                .then(patient_data => {
+                    let total = {
+                        "Total": 0,
+                        "Male": {
+                            "positive": 0,
+                            "negative": 0
+                        },
+                        "Female": {
+                            "positive": 0,
+                            "negative": 0
+                        }
+                    }
+                    let positive_patient_stats = {
+                        "Age over 45": 0,
+                        "Non-resting heart rate": 0,
+                        "High systolic blood pressure": 0,
+                        "High diastolic blood pressure": 0,
+                        "High blood sugar": 0,
+                        "High CK-MB": 0,
+                        "High troponin": 0
+                    }
+
+                    // This looks clunky but it's a way to deep copy the above object, or else you pass by reference issues
+                    let heart_attacks_gender = {
+                        "Male": Object.assign({}, positive_patient_stats),
+                        "Female": Object.assign({}, positive_patient_stats)                
+                    }
+
+                    patient_data.forEach(patient => {
+                        const curr_gender = Number(patient["Gender"]) === 1 ? "Male" : "Female"
+                        total["Total"] += 1
+                        total[curr_gender][patient["Result"]] += 1
+                        if (patient["Result"] === "positive") {
+                            
+                            if (Number(patient["Age"]) > 45) {
+                                heart_attacks_gender[curr_gender]["Age over 45"] += 1
+                            }
+                            if (Number(patient["Heart rate"]) > 100) {
+                                heart_attacks_gender[curr_gender]["Non-resting heart rate"] += 1
+                            }
+                            if (Number(patient["Systolic blood pressure"]) > 120) {
+                                heart_attacks_gender[curr_gender]["High systolic blood pressure"] += 1
+                            }
+                            if (Number(patient["Diastolic blood pressure"]) > 80) {
+                                heart_attacks_gender[curr_gender]["High diastolic blood pressure"] += 1
+                            }
+                            if (Number(patient["Blood sugar"]) > 125) {
+                                heart_attacks_gender[curr_gender]["High blood sugar"] += 1
+                            }
+                            if (Number(patient["CK-MB"]) > 5) {
+                                heart_attacks_gender[curr_gender]["High CK-MB"] += 1
+                            }
+                            if (Number(patient["Troponin"]) > 0.01) {
+                                heart_attacks_gender[curr_gender]["High troponin"] += 1
+                            }
+                        }
+                    })
+
+                    const colors = {
+                        "Female": ["#871904", "#fce9e5", "#d3472b", "#facbc2", "#e5a194", "#e0745f", "#a72b13"],
+                        "Male": ["#a72b13", "#fce9e5", "#d3472b", "#facbc2", "#e0745f", "#e5a194", "#871904"]
+                    }
+
+                    const circle = d3.scaleOrdinal()
+                        .range(colors[gender])
+                    
+                    const pie = d3.pie()
+                        .value(patient => patient[1])
+                        .sort((a, b) => d3.ascending(a[1], b[1]))
+
+                    
+                    // const pie_data = pie(Object.entries(heart_attacks_gender["Male"]))
+                    const pie_data = pie(Object.entries(heart_attacks_gender[gender]))
+
+                    const pie_arc = d3.arc()
+                        .innerRadius(radius - 20)
+                        .outerRadius(radius - 100)
+
+                    const label = d3.select("#ChartContainer")
+                        .append("text")
+                        .attr("id", "Label")
+                        .style("opacity", 0)
+
+                    svg.selectAll("DonutChart")
+                        .data(pie_data)
+                        .enter()
+                        .append("path")
+                        .attr("d", pie_arc)
+                        .attr("fill", patient => circle(patient.data[1]))
+                        .attr("stroke", "white")
+                        .style("stroke-width", "2px")
+                        .on("mouseover", (mouse_event, patient) => {
+                            label.transition()
+                                .duration('200')
+                                .style('opacity', 1)
+                            
+                            label
+                                .text(`${patient.data[1]} ${gender} heart attack patients experienced ${patient.data[0]} (${Math.round((patient.data[1] / total[gender]["positive"]) * 100)}%)`)
+                        })
+                        .on("mouseout", (mouse_event, patient) => {
+                            label.transition()
+                                .duration('200')
+                                .style('opacity', 0)
+                        })
+
+                    d3.select("#ChartContainer")
+                        .append("text")
+                        .text(`${total[gender]["positive"]} ${gender} Heart Attack Patients`)
+                })
+        }
+
+        set_chart("Male")
+    </script>
+</html>

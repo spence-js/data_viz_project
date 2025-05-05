@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="./styles.css">
+        <link rel="icon" type="image/png" href="./iu_logo.png">
+        <!-- <script src="./js/header.js"></script> -->
+        <title>Cardio Data Vizualization</title>
+    </head>
+    <body>
+        <div id="Header">
+            <div>
+                <h1>Documentation</h1>
+            </div>
+            <ul id="NavBar">
+                <li>
+                    <a href="./index.html">Visualization</a>
+                </li>
+                <li>
+                    <a href="./docs.html">Documentation</a>
+                </li>
+                <li>
+                    <a href="https://www.youtube.com"  target="_blank">Video Walkthrough</a>
+                </li>
+            </ul>
+        </div>
+        <div id="Documentation">
+            <p>
+                This visualization was created by Spencer Johnson for NEWM-N328
+            </p>
+            <h4>About the Data</h4>
+            <p>
+                The dataset used is from Kaggle and contains cardiovascular data of hospital patients and whether or not they experienced a heart attack. The dataset can be found <a href="https://www.kaggle.com/datasets/fatemehmohammadinia/heart-attack-dataset-tarik-a-rashid"  target="_blank">here</a>.
+            </p>
+            This dataset has 9 attributes:<br>
+                <table>
+                    <tr>
+                        <td>Age</td>
+                        <td>age of patient</td>
+                    </tr>
+                    <tr>
+                        <td>Gender</td>
+                        <td>0 for female, 1 for male</td>
+                    </tr>
+                    <tr>
+                        <td>Heart rate</td>
+                        <td>Measured in beats per minute</td>
+                    </tr>
+                    <tr>
+                        <td>Systolic blood pressure</td>
+                        <td>Pressure in the arteries during heart beat</td>
+                    </tr>
+                    <tr>
+                        <td>Diastolic blood pressure</td>
+                        <td>Pressure in the arteries between pumps</td>
+                    </tr>
+                    <tr>
+                        <td>Blood sugar</td>
+                        <td>Blood glucose level</td>
+                    </tr>
+                    <tr>
+                        <td>CK-MB</td>
+                        <td>Measured creatine kinase-MB level</td>
+                    </tr>
+                    <tr>
+                        <td>Troponin</td>
+                        <td>Measured troponin level</td>
+                    </tr>
+                    <tr>
+                        <td>Result</td>
+                        <td>Whether the patient had a heart attack (positive) or not (negative)</td>
+                    </tr>
+                </table>
+            <br>
+            <h4>Design Process</h4>
+            <p>
+                Since the data had a large amount of numerical data, I wanted to consolidate some of it into metrics that were easy to understand.<br>
+                Since most people are familiar with heart rate and systolic and diastolic blood pressure (the top and bottom number in a blood pressure test, respectively),<br>
+                I was interested in categorizing those numbers into normal and high ranges.
+                I did the same with the less well-known categories (Blood sugar, CK-MB, and Troponin levels) as well.<br>
+            </p>
+            Thresholds for "normal" vs. "high" categorizations:<br>
+            <table>
+                <tr>
+                    <th>Column</th>
+                    <th>Threshold</th>
+                    <th>Source</th>
+                </tr>
+                <tr>
+                    <td>Age</td>
+                    <td>over 45 years</td>
+                    <td>Mayo Clinic</td>
+                </tr>
+                <tr>
+                    <td>Heart rate</td>
+                    <td>over 100bpm</td>
+                    <td>Mayo Clinic</td>
+                </tr>
+                <tr>
+                    <td>Systolic blood pressure</td>
+                    <td>over 120mm/Hg</td>
+                    <td>Mayo Clinic</td>
+                </tr>
+                <tr>
+                    <td>Diastolic blood pressure</td>
+                    <td>over 80mm/Hg</td>
+                    <td>Mayo Clinic</td>
+                </tr>
+                <tr>
+                    <td>Blood sugar</td>
+                    <td>over 125mg/dL</td>
+                    <td>Cleveland Clinic</td>
+                </tr>
+                <tr>
+                    <td>CK-MB</td>
+                    <td>over 5ng/mL</td>
+                    <td>Redcliffe Labs</td>
+                </tr>
+                <tr>
+                    <td>Troponin</td>
+                    <td>over 0.01ng/mL</td>
+                    <td>Cleveland Clinic</td>
+                </tr>
+            </table>
+            <p>
+                In my visualization, I initially thought the best way to show this information was with a two-column stacked bar chart.<br>
+                The two columns would contain the total number of positive and negative instances, then the layers in each bar would represent the<br>
+                number of patients that fell into that category. I felt like that would not accurately represent what I wanted, since the number on the y-axis could<br>
+                lead people to believe that the number was a total, but it is not since some patients experienced multiple symptoms.<br>
+                <img src="./simple_stacked_hist.png" height="200" width="250" />
+                <br>
+                I decided on a donut chart because I felt it was a visually appealing way to show amounts of numbers and how they compare.<br>
+                I also decided to use differing shades of red to indicate how strong of an indicator an abnormality was (darker red for the most common symptoms).<br>
+                You will notice that the indicator with the darkest color is not the same between the genders!<br>
+                I only used the patients that had experienced heart attacks, and I separated the visualization by gender.<br>
+                The donut chart was selected because the perceived "total" is not a specific number, however percentages were calculated<br>
+                from the total positive heart attack number in each gender. While this may be a bit confusing, I found the shapes for easily comparing between items<br>
+                to be worth the compromise.
+            </p>
+            <br>
+            <h4>Questions to answer:</h4> 
+            <p>
+                Which categories are the strongest indicators of a heart attack?<br>
+                Are the numbers that people are most familiar with (heart rate, blood pressure, blood sugar) better indicators than  the others others<br>
+                for predicting heart attacks?<br>
+                Do the most common indicators differ between Male and Female patients?<br>
+            </p>
+            <br>
+            <h4>Results:</h4>
+            <p>
+                Across both male and female patients, an age over 45 years old is the most common for females (90%) and second strongest for males (84%) most common attribute.<br>
+                High systolic blood pressure (pressure in the heart DURING a beat) occured in 53% of males and 52% of females, however high diastolic blood pressure was present in less than quarter of patients in each gender<br>
+                and heart rates over resting were under 10% across genders<br>
+                Less than half of males and females experienced high blood sugar, while a slightly larger percentage (49%) of females experienced high levels of CK-MB compared to males (41%)<br>
+                High troponin levels was the most common or second most common abnormality for males and females (86% and 76% respectively)<br>
+                Upon further research, this is due to the fact that troponin is a protein that is found after heart muscle is damaged.<br>
+            </p>
+        </div>
+    </body>
+</html>
